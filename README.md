@@ -1,4 +1,4 @@
-# `Bitscope - The Bitcoin Explorer`
+# `Facienda - A To-Do App`
 
 **Author:** Joseph Anthony Debono,  
 **email:** [joe@jadebono.com](joe@jadebono.com)  
@@ -11,7 +11,7 @@
 
 # `Name and Tagline`
 
-**Facienda** - A To-Do MERN App
+**Facienda** - A To-Do MERN App  
 _Order your life_
 
 ---
