@@ -10,7 +10,6 @@ const TaskSlice = createSlice({
   initialState,
   reducers: {
     addTask: (state, action) => {
-      // Add a new task to the array
       state.list.push(action.payload);
     },
     deleteTask: (state, action) => {

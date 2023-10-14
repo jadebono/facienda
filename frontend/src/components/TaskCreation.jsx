@@ -8,6 +8,8 @@ const TaskCreationArea = ({ onTaskCreate }) => {
   const [task, setTask] = useState("");
   const [label, setLabel] = useState("");
   const [priority, setPriority] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [dueTime, setDueTime] = useState("");
 
   const dispatch = useDispatch();
 
@@ -64,6 +66,8 @@ const TaskCreationArea = ({ onTaskCreate }) => {
       task,
       label,
       priority,
+      dueTime,
+      dueDate,
     };
 
     dispatch(addTask(newTask));
@@ -112,6 +116,19 @@ const TaskCreationArea = ({ onTaskCreate }) => {
         <option value="medium">Medium</option>
         <option value="low">Low</option>
       </select>
+      <input
+        type="time"
+        value={dueTime}
+        onChange={(e) => setDueTime(e.target.value)}
+        className="w-full p-2 mb-2 border  border-blue-900 text-blue-900 font-bold rounded-md "
+      />
+      <input
+        type="date"
+        value={dueDate}
+        onChange={(e) => setDueDate(e.target.value)}
+        className="w-full p-2 mb-2 border border-blue-900  text-blue-900 font-bold rounded-md "
+      />
+
       <div className="flex justify-center">
         <button onClick={handleSubmit} className="btn-gen">
           Add Task
