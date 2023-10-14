@@ -84,55 +84,88 @@ usersRouter.route("/register").post(async (req, res) => {
 });
 
 //post to signin user
+// Define route to handle user login
 usersRouter.route("/login").post(async (req, res) => {
-  const { username, password } = req.body.userData;
-  // encrypt username
-  const encryptedUsername = encipher(username);
-  // hash password
-  const hashedPassword = HashString(password);
-  // search collection users for someone with this username
-  await LoadFromDB(process.env.DB_COLLECTION_USERS, {
-    username: encryptedUsername,
-  })
-    .then((response) => {
-      // destructure and decrypt data
-      const user = response[0];
-      // check that user is not "undefined"
-      if (!user) {
-        res.send({
-          login: false,
-          userId: "",
-          username: "",
-          token: "",
-        });
-        // if username exists AND password matches
-      } else if (
-        encryptedUsername === user.username &&
-        hashedPassword === user.password
-      ) {
-        // generate token
-        const token = signSessionToken(user._id);
-        res.send({
-          login: true,
-          userId: user._id,
-          username: username,
-          token: token,
-        });
-        console.log("Successful login!");
-      }
-      // if username exists but password is incorrect
-      // send an empty object with login: false
-      else {
-        res.send({
-          login: false,
-          userId: "",
-          username: "",
-          token: "",
-        });
-        console.log("Invalid login!");
-      }
-    })
-    .catch((error) => console.log(error));
+  try {
+    // Extract username and password from the request
+    const { username, password } = req.body.userData;
+
+    // Encrypt the username and hash the password for security
+    const encryptedUsername = encipher(username);
+    const hashedPassword = HashString(password);
+
+    // Retrieve users from the database with the encrypted username
+    const users = await LoadFromDB(process.env.DB_COLLECTION_USERS, {
+      username: encryptedUsername,
+    });
+
+    // Extract the first user from the response
+    const user = users[0];
+
+    // If user doesn't exist, send an appropriate response
+    if (!user) {
+      return res.send({
+        login: false,
+        userId: "",
+        username: "",
+        token: "",
+      });
+    }
+
+    // If the encrypted username and hashed password match the database entry
+    if (
+      encryptedUsername === user.username &&
+      hashedPassword === user.password
+    ) {
+      // Generate a session token for the user
+      const token = signSessionToken(user._id);
+
+      // Fetch tasks related to this user from the tasks collection
+      const tasksResponse = await LoadFromDB(process.env.DB_COLLECTION_TASKS, {
+        _id: { $eq: new ObjectId(user._id) },
+      });
+
+      // Extract tasks from the response or default to an empty array if none found
+      const tasks = tasksResponse.length ? tasksResponse[0].task : [];
+      tasks.forEach((task) => {
+        console.log(task.dueTime, task.dueDate);
+      });
+      // decipher tasks:
+      const decipheredTasks = tasks.map((task) => {
+        return {
+          id: JSON.parse(decipher(task.id)),
+          task: JSON.parse(decipher(task.task)),
+          label: JSON.parse(decipher(task.label)),
+          priority: JSON.parse(decipher(task.priority)),
+          dueTime: JSON.parse(decipher(task.dueTime)),
+          dueDate: JSON.parse(decipher(task.dueDate)),
+        };
+      });
+      decipheredTasks.forEach((decipheredTask) => {
+        console.log(decipheredTask.dueTime, decipheredTask.dueDate);
+      });
+      // Send a successful login response with user details and tasks
+      return res.send({
+        login: true,
+        userId: user._id,
+        username: username,
+        token: token,
+        tasks: decipheredTasks,
+      });
+    }
+
+    // If username exists but password doesn't match, send a failed login response
+    res.send({
+      login: false,
+      userId: "",
+      username: "",
+      token: "",
+    });
+  } catch (error) {
+    // Log any errors and send a server error response
+    console.log(error);
+    res.status(500).send("Server error");
+  }
 });
 
 // route to validate session
@@ -149,23 +182,15 @@ usersRouter.route("/sessionSignin").post(async (req, res) => {
   if (user) {
     await LoadFromDB(process.env.DB_COLLECTION_USERS, {
       _id: { $eq: new ObjectId(user) },
-    })
-      .then((response) => {
-        const loggedUser = response.pop();
-        const username = decipher(loggedUser.username);
-        res.send({
-          id: loggedUser._id,
-          username: username,
-        });
-        console.log("User session successfully restored");
-      })
-      .catch((err) => {
-        res.send({
-          id: "",
-          username: "",
-        });
-        console.log("There was some error!");
+    }).then((response) => {
+      const loggedUser = response.pop();
+      const username = decipher(loggedUser.username);
+      res.send({
+        id: loggedUser._id,
+        username: username,
       });
+      console.log("User session successfully restored");
+    });
   } else {
     res.send({
       id: "",
@@ -176,6 +201,8 @@ usersRouter.route("/sessionSignin").post(async (req, res) => {
 });
 
 // route to close a user's account
+// !! add functionality to delete not just user's document in users collection
+// !! but also user's document in tasks collection
 usersRouter.route("/deleteUser").post(async (req, res) => {
   const user = req.body.userId;
   // Check if user has subscriptions and if so delete his document in the subscriptions collection

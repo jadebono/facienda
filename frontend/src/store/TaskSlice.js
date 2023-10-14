@@ -15,10 +15,17 @@ const TaskSlice = createSlice({
     deleteTask: (state, action) => {
       state.list = state.list.filter((task) => task.id !== action.payload);
     },
+    clearAllTasks: (state) => {
+      state.list = [];
+    },
+    setTasks: (state, action) => {
+      state.list = action.payload;
+    },
   },
-  //* See if you need more reducers.
+  //* See if I need more reducers.
 });
 
-export const { addTask, deleteTask } = TaskSlice.actions;
+export const { addTask, deleteTask, clearAllTasks, setTasks } =
+  TaskSlice.actions;
 
 export default TaskSlice;

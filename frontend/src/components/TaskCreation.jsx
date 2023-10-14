@@ -1,10 +1,15 @@
 // TaskCreation.jsx
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
+
 import { addTask } from "../store/TaskSlice";
 import { setNotification } from "../store/NotificationsSlice";
+import { postTask } from "../modules/requests.js";
 
 const TaskCreationArea = ({ onTaskCreate }) => {
+  const isLoggedIn = useSelector((state) => state.user.logged);
+  const userId = useSelector((state) => state.user.userId);
   const [task, setTask] = useState("");
   const [label, setLabel] = useState("");
   const [priority, setPriority] = useState("");
@@ -31,7 +36,7 @@ const TaskCreationArea = ({ onTaskCreate }) => {
     }
     // Create a task object with a unique ID
     const newTask = {
-      id: Date.now(),
+      id: uuidv4(),
       task,
       label,
       priority,
@@ -40,6 +45,11 @@ const TaskCreationArea = ({ onTaskCreate }) => {
     };
 
     dispatch(addTask(newTask));
+
+    // Check if the user is logged in
+    if (isLoggedIn) {
+      postTask(userId, newTask);
+    }
 
     // Reset the form
     setTask("");

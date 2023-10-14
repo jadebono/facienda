@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { deleteTask } from "../modules/requests";
 
 const TaskCard = ({ task, onDelete }) => {
   // !! check if there is any use for tasks
   const tasks = useSelector((state) => state.tasks.list);
   const [isExpired, setIsExpired] = useState(false);
+  const userId = 'someUserId'; 
+
 
   //   create a check for the date & time
   const isTaskExpired = (dueDate, dueTime) => {
@@ -66,14 +69,6 @@ const TaskCard = ({ task, onDelete }) => {
           </p>
         </div>
         <div>
-          <p className="mb-2 text-blue-900 inline-block">Due Date:&nbsp;</p>
-          <p
-            className={`inline-block font-extrabold text-indigo-900 ${expiredClass}`}
-          >
-            {task.dueDate}
-          </p>
-        </div>
-        <div>
           <p className="mb-2 text-blue-900 inline-block">Due Time:&nbsp;</p>
           <p
             className={`inline-block font-extrabold text-indigo-900 ${expiredClass}`}
@@ -81,6 +76,15 @@ const TaskCard = ({ task, onDelete }) => {
             {task.dueTime}
           </p>
         </div>
+        <div>
+          <p className="mb-2 text-blue-900 inline-block">Due Date:&nbsp;</p>
+          <p
+            className={`inline-block font-extrabold text-indigo-900 ${expiredClass}`}
+          >
+            {task.dueDate}
+          </p>
+        </div>
+
         <div>
           <p className="mb-2 text-blue-900 inline-block">Priority:&nbsp;</p>
           <p

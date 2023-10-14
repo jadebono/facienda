@@ -9,6 +9,7 @@ import { ConnectMDB, CloseMDB } from "./mongoConnect.js";
 
 // importing routes
 import { subscribersRouter } from "./routes/subscribers.js";
+import { tasksRouter } from "./routes/tasks.js";
 import { usersRouter } from "./routes/users.js";
 
 // run dotenv.config()
@@ -23,8 +24,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // routes
-app.use("/users", usersRouter);
 app.use("/subscribers", subscribersRouter);
+app.use("/tasks", tasksRouter);
+app.use("/users", usersRouter);
 
 // connect to db at server start
 ConnectMDB();

@@ -52,7 +52,10 @@ export async function postRegister(register) {
 export async function postLogin(userData) {
   const response = await axios
     .post(`${SERVER}/users/login`, { userData })
-    .then((response) => response.data)
+    .then((response) => {
+      console.log(response.data);
+      return response.data;
+    })
     .catch((err) => err);
   return response;
 }
@@ -142,5 +145,31 @@ export async function postUpdatePassword(myDetails) {
     .catch((err) => err);
   return response;
 }
-
 // <- update user details requests end here
+
+// requests to post, delete and retrieve tasks start here ->
+// request to post tasks
+export async function postTask(userId, tasks) {
+  const payload = {
+    userId: userId,
+    tasks: tasks,
+  };
+  const response = await axios
+    .post(`${SERVER}/tasks/post`, payload)
+    .then((response) => response.data)
+    .catch((err) => err);
+  return response;
+}
+
+// request to delete tasks
+export async function deleteTaskFromDB(userId, taskId) {
+  const payload = {
+    userId: userId,
+    taskId: taskId,
+  };
+  const response = await axios
+    .post(`${SERVER}/tasks/delete`, payload)
+    .then((response) => response.data)
+    .catch((err) => err);
+  return response;
+}

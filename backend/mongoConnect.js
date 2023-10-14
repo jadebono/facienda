@@ -72,6 +72,20 @@ export async function updateDB(col, filter, data) {
   }
 }
 
+// function to push new task into tasks array in tasks collection
+export async function updateTasksArray(col, userId, newTask) {
+  try {
+    await db.collection(col).updateOne(
+      { _id: userId },
+      {
+        $push: { task: newTask },
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 // The db.collection.updateMany() method updates all documents in the collection that match the specified filter with the specified update.
 // In this case it will be used to update an array in a document
 export async function updateArrayDB(col, filter, field, value) {

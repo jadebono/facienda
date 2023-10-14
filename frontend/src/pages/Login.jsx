@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { postLogin } from "../modules/requests";
 import { setNotification } from "../store/NotificationsSlice";
+import { setTasks } from "../store/TaskSlice";
 import { setUser } from "../store/UserSlice";
 
 /*
@@ -51,6 +52,8 @@ export default function Login() {
           username: username,
         })
       );
+      // Set the tasks in Redux store
+      dispatch(setTasks(response.tasks));
       // send notification to user that he has logged in
       dispatch(
         setNotification({
