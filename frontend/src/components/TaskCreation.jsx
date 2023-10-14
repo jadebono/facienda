@@ -14,47 +14,16 @@ const TaskCreationArea = ({ onTaskCreate }) => {
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
-    if (label === "" && priority === "" && task === "") {
+    if (
+      label === "" ||
+      priority === "" ||
+      task === "" ||
+      dueTime === "" ||
+      dueDate === ""
+    ) {
       dispatch(
         setNotification({
-          message: "No inputs provided!",
-          type: "error",
-        })
-      );
-      return;
-    }
-    if (label === "" && priority === "") {
-      dispatch(
-        setNotification({
-          message: "Neither label nor priority selected!",
-          type: "error",
-        })
-      );
-      return;
-    }
-    if (task === "") {
-      dispatch(
-        setNotification({
-          message: "No task inputted!",
-          type: "error",
-        })
-      );
-      return;
-    }
-
-    if (label === "") {
-      dispatch(
-        setNotification({
-          message: "No label selected!",
-          type: "error",
-        })
-      );
-      return;
-    }
-    if (priority === "") {
-      dispatch(
-        setNotification({
-          message: "No priority selected!",
+          message: "Not all inputs have been supplied!",
           type: "error",
         })
       );
@@ -76,6 +45,8 @@ const TaskCreationArea = ({ onTaskCreate }) => {
     setTask("");
     setLabel("");
     setPriority("");
+    setDueDate("");
+    setDueTime("");
   };
 
   return (

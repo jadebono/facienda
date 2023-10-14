@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const TaskCard = ({ task, onDelete }) => {
+  // !! check if there is any use for tasks
   const tasks = useSelector((state) => state.tasks.list);
+  const [isExpired, setIsExpired] = useState(false);
 
-  // Function to determine if the task is expired
+  //   create a check for the date & time
   const isTaskExpired = (dueDate, dueTime) => {
     const currentDate = new Date();
     const taskDate = new Date(`${dueDate}T${dueTime}`);
     return taskDate < currentDate;
   };
 
-  // Determine if the task is expired and get the appropriate class
+  //   useEffect to check the date/time and update component automatically when they expire
+  useEffect(() => {
+    const checkInterval = () => {
+      const expired = isTaskExpired(task.dueDate, task.dueTime);
+      setIsExpired(expired);
+    };
+
+    checkInterval(); // Check initially when the component is mounted
+
+    const interval = setInterval(checkInterval, 1000 * 60); // Check every minute
+
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, [task.dueDate, task.dueTime]);
+
   const expiredClass = isTaskExpired(task.dueDate, task.dueTime)
     ? "line-through font-medium "
     : "";
