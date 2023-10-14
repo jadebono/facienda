@@ -83,11 +83,10 @@ export default function App() {
         <div className="p-4">
           <Header />
         </div>
-        {user.logged && (
-          <div className="">
-            <Status />
-          </div>
-        )}
+
+        <div className="">
+          <Status />
+        </div>
       </div>
       <div className="pb-20">
         <Routes>
