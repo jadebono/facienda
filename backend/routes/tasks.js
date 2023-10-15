@@ -7,7 +7,6 @@ import dotenv from "dotenv";
 import express from "express";
 import { encipher, decipher } from "../encryption.js";
 import {
-  deleteFromDB,
   LoadFromDB,
   SaveToDB,
   updateDB,
@@ -22,7 +21,6 @@ dotenv.config();
 
 /* async function to test if a user has a document in the tasks collection.
 parameter userId is an ObjectId(userId)
-
 */
 async function testUsersData(userId) {
   const test = await LoadFromDB(process.env.DB_COLLECTION_TASKS, {

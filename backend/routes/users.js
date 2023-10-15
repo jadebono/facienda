@@ -18,6 +18,7 @@ import {
   validateSessionToken,
   decryptSessionToken,
 } from "../token.js";
+import { testSubscribersData } from "../routes/subscribers.js";
 export const usersRouter = express.Router();
 
 dotenv.config();
@@ -217,58 +218,40 @@ usersRouter.route("/sessionSignin").post(async (req, res) => {
 });
 
 // route to close a user's account
-// !! add functionality to delete not just user's document in users collection
-// !! but also user's document in tasks collection
 usersRouter.route("/deleteUser").post(async (req, res) => {
   const user = req.body.userId;
-  // Check if user has subscriptions and if so delete his document in the subscriptions collection
-  try {
-    // Get user details from DB_COLLECTION_USERS
-    const response = await LoadFromDB(process.env.DB_COLLECTION_USERS, {
-      _id: { $eq: new ObjectId(user) },
-    });
-    // Extract and decipher the username
-    const decipheredUsername = decipher(response[0].username);
-    // test username by ID
-    const testSubscriptions = await testSubscriptionData(
-      "username",
-      encipher(decipheredUsername)
-    );
-    if (testSubscriptions) {
-      const fieldData = encipher(decipheredUsername);
-      await deleteFromDB(process.env.DB_COLLECTION_SUBSCRIPTIONS, {
-        username: fieldData,
-      });
-      console.log("Subscription data successfully deleted");
-    } else {
-      console.log("No subscription data found to delete");
-    }
-  } catch (error) {
-    console.log("An error occurred:", error);
-  }
-  // Now delete user's document from the tasks collections
+  // Get user details from DB_COLLECTION_USERS
+  const response = await LoadFromDB(process.env.DB_COLLECTION_USERS, {
+    _id: { $eq: new ObjectId(user) },
+  });
 
+  // extract enciphered email
+  const encipheredEmail = response[0].email;
+  // Check to make sure submitted email is already there
+  const testEmail = await testSubscribersData("email", encipheredEmail);
+  // if email exists delete user's record
   try {
+    if (testEmail) {
+      await deleteFromDB(process.env.DB_COLLECTION_SUBSCRIBERS, {
+        email: encipheredEmail,
+      });
+      console.log("Email successfully unsubscribed");
+    }
+    // Next delete user's tasks document
     await deleteFromDB(process.env.DB_COLLECTION_TASKS, {
       _id: { $eq: new ObjectId(user) },
     });
-    res.send(true);
     console.log("Tasks data successfully closed!");
-  } catch (err) {
-    res.send(false);
-    console.log("Error during deletion:", err);
-  }
-
-  // Now delete the user's document from the users collections
-  try {
+    // Finally delete a user's users document
     await deleteFromDB(process.env.DB_COLLECTION_USERS, {
       _id: { $eq: new ObjectId(user) },
     });
-    res.send(true);
     console.log("Account successfully closed!");
+
+    res.send(true);
   } catch (err) {
+    console.error("Error during deletion:", err);
     res.send(false);
-    console.log("Error during deletion:", err);
   }
 });
 
@@ -299,7 +282,6 @@ usersRouter.route("/details").post(async (req, res) => {
 });
 
 // update user details routes start here =>
-
 // route to update username
 usersRouter.route("/updateusername").post(async (req, res) => {
   const username = req.body.username;
@@ -370,5 +352,4 @@ usersRouter.route("/updatepwd").post(async (req, res) => {
     console.log("Unknown problem with that password");
   }
 });
-
 // <- update user details routes end here

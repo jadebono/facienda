@@ -4,16 +4,15 @@
 
 import dotenv from "dotenv";
 import express from "express";
-import { encipher, decipher } from "../encryption.js";
+import { encipher } from "../encryption.js";
 import { deleteFromDB, LoadFromDB, SaveToDB } from "../mongoConnect.js";
 import nodemailer from "nodemailer";
-import { ObjectId } from "mongodb";
 export const subscribersRouter = express.Router();
 
 dotenv.config();
 
 /* async function to test if any of the user's data exists in encrypted form in the subscribers collection */
-async function testSubscribersData(key, value) {
+export async function testSubscribersData(key, value) {
   const obj = { [key]: value };
   const test = await LoadFromDB(process.env.DB_COLLECTION_SUBSCRIBERS, obj)
     .then((response) => {
@@ -66,6 +65,7 @@ subscribersRouter.route("/unsubscribe").post(async (req, res) => {
   // Check to make sure submitted email is already there
   const testEmail = await testSubscribersData("email", encipheredEmail);
   // if email exists delete user's record
+
   if (testEmail) {
     // delete record
     await deleteFromDB(process.env.DB_COLLECTION_SUBSCRIBERS, {
