@@ -5,7 +5,7 @@
 **Frontend:** [Localhost:3000](http:localhost:3000/)  
 **Backend:** [Localhost:4000](http:localhost:4000/)  
 **Date of commencement:** 13 October 2023  
-**Date of completion:** 15 October 2023
+**Date of completion:** 15 October 2023  
 **License:** MIT
 
 ---
