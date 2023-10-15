@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteUser, userDetails } from "../modules/requests";
 import { setNotification } from "../store/NotificationsSlice";
 import { clearUser } from "../store/UserSlice";
+import { clearAllTasks } from "../store/TaskSlice";
 import {
   clearUpdateButtons,
   setUpdateButtons,
@@ -61,6 +62,7 @@ export default function Account() {
   function logout(message) {
     document.cookie = `session=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
     dispatch(clearUser());
+    dispatch(clearAllTasks());
     dispatch(
       setNotification({
         type: "success",

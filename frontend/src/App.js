@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "../src/store/NotificationsSlice";
+import { setTasks, clearAllTasks } from "./store/TaskSlice";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/NavBar";
 import Header from "./components/Header";
@@ -33,8 +34,11 @@ export default function App() {
       // if there is no userSess logged in, check to see if there is a cookie
       // if so, log in the user and and set the state.user to the same state as
       // userSess
+      // if myCookie === 0, session cookie exists, if -1, session cookie does not exist
       if (!userSess.logged && cookieExists === 0) {
         let loggedUser = await session();
+        //  dispatch tasks to tasks store
+        dispatch(setTasks(loggedUser.tasks));
         await setUserSess((prevUser) => {
           return {
             id: loggedUser.id,
@@ -57,9 +61,9 @@ export default function App() {
         dispatch(setUser({ userId: userSess.id, username: userSess.username }));
       }
       // if userSess is logged in but !user.logged and there is no
-      // cookie, it means the user has logged out so clear userSes
+      // cookie, it means the user has logged out so clear userSess and clear Tasks
       else if (userSess.logged && !user.logged && cookieExists === -1) {
-        console.log(`clearing state`);
+        dispatch(clearAllTasks());
         await setUserSess((prevUser) => {
           return {
             id: "",
@@ -69,7 +73,6 @@ export default function App() {
         });
       }
     }
-    // if myCookie === 0, session cookie exists, if -1, session cookie does not exist
     const myCookie = document.cookie.indexOf("session=");
     myCookie === 0 && getSession(myCookie);
   }, [user, userSess, dispatch]);

@@ -12,7 +12,6 @@ import {
   SaveToDB,
   updateDB,
 } from "../mongoConnect.js";
-import nodemailer from "nodemailer";
 import { ObjectId } from "mongodb";
 import {
   signSessionToken,
@@ -127,9 +126,7 @@ usersRouter.route("/login").post(async (req, res) => {
 
       // Extract tasks from the response or default to an empty array if none found
       const tasks = tasksResponse.length ? tasksResponse[0].task : [];
-      tasks.forEach((task) => {
-        console.log(task.dueTime, task.dueDate);
-      });
+      tasks.forEach((task) => {});
       // decipher tasks:
       const decipheredTasks = tasks.map((task) => {
         return {
@@ -141,9 +138,7 @@ usersRouter.route("/login").post(async (req, res) => {
           dueDate: JSON.parse(decipher(task.dueDate)),
         };
       });
-      decipheredTasks.forEach((decipheredTask) => {
-        console.log(decipheredTask.dueTime, decipheredTask.dueDate);
-      });
+
       // Send a successful login response with user details and tasks
       return res.send({
         login: true,
@@ -182,12 +177,33 @@ usersRouter.route("/sessionSignin").post(async (req, res) => {
   if (user) {
     await LoadFromDB(process.env.DB_COLLECTION_USERS, {
       _id: { $eq: new ObjectId(user) },
-    }).then((response) => {
+    }).then(async (response) => {
       const loggedUser = response.pop();
       const username = decipher(loggedUser.username);
+      // Fetch tasks related to this user from the tasks collection
+      const tasksResponse = await LoadFromDB(process.env.DB_COLLECTION_TASKS, {
+        _id: { $eq: new ObjectId(user) },
+      });
+
+      // Extract tasks from the response or default to an empty array if none found
+      const tasks = tasksResponse.length ? tasksResponse[0].task : [];
+
+      // decipher tasks:
+      const decipheredTasks = tasks.map((task) => {
+        return {
+          id: JSON.parse(decipher(task.id)),
+          task: JSON.parse(decipher(task.task)),
+          label: JSON.parse(decipher(task.label)),
+          priority: JSON.parse(decipher(task.priority)),
+          dueTime: JSON.parse(decipher(task.dueTime)),
+          dueDate: JSON.parse(decipher(task.dueDate)),
+        };
+      });
+
       res.send({
         id: loggedUser._id,
         username: username,
+        tasks: decipheredTasks,
       });
       console.log("User session successfully restored");
     });
@@ -230,6 +246,19 @@ usersRouter.route("/deleteUser").post(async (req, res) => {
   } catch (error) {
     console.log("An error occurred:", error);
   }
+  // Now delete user's document from the tasks collections
+
+  try {
+    await deleteFromDB(process.env.DB_COLLECTION_TASKS, {
+      _id: { $eq: new ObjectId(user) },
+    });
+    res.send(true);
+    console.log("Tasks data successfully closed!");
+  } catch (err) {
+    res.send(false);
+    console.log("Error during deletion:", err);
+  }
+
   // Now delete the user's document from the users collections
   try {
     await deleteFromDB(process.env.DB_COLLECTION_USERS, {

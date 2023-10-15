@@ -52,10 +52,7 @@ export async function postRegister(register) {
 export async function postLogin(userData) {
   const response = await axios
     .post(`${SERVER}/users/login`, { userData })
-    .then((response) => {
-      console.log(response.data);
-      return response.data;
-    })
+    .then((response) => response.data)
     .catch((err) => err);
   return response;
 }
@@ -78,8 +75,8 @@ async function sessionSignin(token) {
       cookie: token,
     })
     .then((res) => {
-      const { id, username } = { ...res.data };
-      user = { id: id, username: username };
+      const { id, username, tasks } = { ...res.data };
+      user = { id: id, username: username, tasks: tasks };
     });
   return user;
 }
