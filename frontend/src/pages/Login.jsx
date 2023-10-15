@@ -8,9 +8,9 @@ import { setUser } from "../store/UserSlice";
 /*
 
 once the response is returned:
-if login - update store and notify user that login has taken place and turn navbar img orange
-if not - notify user of invalid login
-if error - notify of error
+if login - update store and notify user that login has taken place and turn navbar user account roundel green;
+if not - notify user of invalid login;
+if error - notify of error.
 
 add functionality in server to check for a valid token and login automatically if it exists
 
@@ -21,7 +21,6 @@ export default function Login() {
   const dispatch = useDispatch();
 
   // access the user state from the store
-  // ?  do I need this here?
   const user = useSelector((state) => state.user);
 
   // max_age for the cookie in seconds

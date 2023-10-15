@@ -40,7 +40,6 @@ async function testUsersData(userId) {
 //post to save tasks in tasks collection
 tasksRouter.route("/post").post(async (req, res) => {
   const { userId, tasks } = req.body;
-  //   console.log(userId, tasks);
   const user = new ObjectId(userId);
   const id = encipher(JSON.stringify(tasks.id));
   const task = encipher(JSON.stringify(tasks.task));

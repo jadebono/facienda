@@ -1,5 +1,4 @@
 // sends emails to mailtrap.io
-
 import React, { useState, useEffect } from "react";
 import { postContactForm } from "../modules/requests";
 import { useDispatch } from "react-redux";

@@ -5,6 +5,7 @@
 **Frontend:** [Localhost:3000](http:localhost:3000/)  
 **Backend:** [Localhost:4000](http:localhost:4000/)  
 **Date of commencement:** 13 October 2023  
+**Date of completion:** 15 October 2023
 **License:** MIT
 
 ---
@@ -20,9 +21,26 @@ _Order your life_
 
 ## `Implemented features`
 
-## `Features not tested`
-
-## `Main Problem`
+1. Offers any user the facility to subscribe to a newsletter, send an email to the application, register an account, and log in;
+1. Any user may create tasks but tasks are not saved unless the user registers an account and is logged-in;
+1. The tasks created by a logged-in user will be saved in the database and retrieved every time he logs in, and a logged-in user has comprehensive account control facilities through the user account roundel on the far-right;
+   - A logged-in user can log out;
+   - A logged-in user can close his account and the system will delete all his data in all the database collections in which he has data;
+   - A logged-in user can change his username, email, and password;
+   - Any task a logged-in user creates will be saved in the tasks collection of the db, and will be retrieved any time he logs in or restores a session;
+   - If a user deletes a task, it will be deleted in the db;
+   - A user's registration details and all his data will be saved in encrypted form in the db, except the password, the hash of which is saved, and the ObjectId.
+1. Any number of user accounts supported, with different users having their own unique tasks;
+1. The task-creation form creates a task with the following data: task, label, priority, due time and due date. The task card displays all this data in the appropriate fields;
+1. The task card has a bar running at the top the colour of which indicates the priority: {high: red, medium: orange, low: green}. This bar also provides a white button with a black x that deletes the task;
+1. The field of the priority label at the bottom of the task card is also colour coded in the same way: {high: red, medium: orange, low: green};
+1. Once the due time and due date expire, they are displayed in light font with a strikethrough to indicate that the alloted time has expired;
+1. The mechanism to deal with the completion of the task is to delete it by clicking on the white button with the black x in the top right-hand corner of the task card;
+1. Authentication, and session persistence and session retrieval implemented:
+   - Sessions are tracked using a cookie created using jwt from jsonwebtoken package;
+   - If a logged-in user does not log out, the session will persist for four hours;
+   - If a logged-in user closes the web browser before the expiry of the session cookie (four hours duration), the session will be retrieved once more when he opens the browser and navigates to the app's link (in development mode: [Localhost:3000](http:localhost:3000/));
+1. Notification system using a colour-coded toast element.
 
 ---
 
@@ -35,19 +53,23 @@ This project was bootstrapped with:
 [Redux Toolkit](https://redux-toolkit.js.org/)  
 [Tailwind](https://tailwindcss.com/)
 
-## Available Scripts
-
 In the frontend/ directory, you can run:
 
 ```bash
 npm start
 ```
 
-Runs the app in the development mode.\
-Open [http://localhost:3001](http://localhost:3000) to view it in your browser.
+This runs the app in development mode. The default port is 3000:
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
+The page will reload when you make changes.
 You may also see any lint errors in the console.
+
+**Note**:
+
+The the frontend expects to connect to a backend running on port 4000. If your backend is running on any other port, you will have to change the port in the relevant environmental variable in the .env files of BOTH the frontend and the backend.
+
+## Available Scripts
 
 ### `npm test`
 
@@ -185,8 +207,12 @@ document.cookie = `session=""; max-age=0`;
 ## `MongoDB`
 
 Database: ecom
-Database name:
-Collections:
+Database name: facienda  
+Collections: users, subscribers, tasks
+
+1. **users**: each document saves the registration data of an individual user;
+1. **subscribers**: saves the data of a subscriber to the newsletter (does not need to have an account or to be logged in to subscribe to the newsletter);
+1. **tasks**: each document saves the tasks of registered user.
 
 ## `Mailtrap`
 

@@ -1,12 +1,4 @@
 // Account page with logout facility
-/*
-- panel with current details, and buttons to edit username/email/password
-- second panel for update username/email/password that appears when the user clicks on the relevant buttons
-- button to delete account
-- button to logout
-
-*/
-
 import React, { useState, useEffect } from "react";
 import Updateusername from "../components/Updateusername";
 import Updateemail from "../components/Updateemail";

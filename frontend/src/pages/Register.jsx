@@ -66,7 +66,6 @@ export default function Register() {
     if (isPasswordValid && arePasswordsIdentical) {
       // transmit register to axios post request
       const response = await postRegister(register);
-      console.log(`response is ${response}`);
       if (response === "bothTaken") {
         dispatch(
           setNotification({

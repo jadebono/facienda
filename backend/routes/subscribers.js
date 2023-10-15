@@ -41,7 +41,6 @@ subscribersRouter.route("/subscribe").post(async (req, res) => {
     res.send("Email is already subscribed!");
     console.log("Email is already subscribed!");
   } else {
-    console.log(process.env.DB_COLLECTION_SUBSCRIBERS);
     await SaveToDB(process.env.DB_COLLECTION_SUBSCRIBERS, {
       name: encipheredName,
       surname: encipheredSurname,

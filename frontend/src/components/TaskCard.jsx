@@ -3,11 +3,8 @@ import { useSelector } from "react-redux";
 import { deleteTask } from "../modules/requests";
 
 const TaskCard = ({ task, onDelete }) => {
-  // !! check if there is any use for tasks
   const tasks = useSelector((state) => state.tasks.list);
   const [isExpired, setIsExpired] = useState(false);
-  const userId = 'someUserId'; 
-
 
   //   create a check for the date & time
   const isTaskExpired = (dueDate, dueTime) => {

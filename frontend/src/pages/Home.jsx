@@ -27,8 +27,12 @@ export default function Home() {
   };
 
   // Sort the tasks by priority
-  // !! use something other than useMemo if you can
-  const sortedTasks = useMemo(() => {
+  /*
+useMemo iss used for performance optimization. It will memorize the result of an invoked function so that during re-renders, it will not recompute the result again unless certain dependencies have changed. The hook takes two arguments:
+A function that computes a value.
+An array of dependencies.
+The hook will recompute the memorized value only when the dependencies have changed between renders.
+*/ const sortedTasks = useMemo(() => {
     return [...tasks].sort(
       (a, b) => priorityValue(a.priority) - priorityValue(b.priority)
     );
@@ -37,7 +41,6 @@ export default function Home() {
   // Delete function
   const handleDelete = async (taskId) => {
     const response = await deleteTaskFromDB(userId, taskId);
-    console.log(response);
     if (response === "Task deleted successfully") {
       dispatch(deleteTask(taskId));
     } else {
